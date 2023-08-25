@@ -1,6 +1,6 @@
 
 import './App.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './components/Header';
 import { AiOutlinePlus } from 'react-icons/ai';
 
@@ -38,9 +38,23 @@ function App() {
     setData(arr);
     localStorage.setItem('data', JSON.stringify(arr));
   }
+
+const [state, setState] = useState(1)
+const [fetchdata, setfetchdata] = useState([])
+
+useEffect(()=>{
+    const datafetch = async()=>{
+       let url = await fetch(`https://hub.dummyapis.com/employee?noofRecords=${state}&idStarts=1001`) ;
+       let res = await url.json()
+       setfetchdata(res)
+       console.log(res);
+    }
+    datafetch()
+},[state])
+
   return (
     <>
-
+    
       <div>
         <Header />
       </div>
@@ -105,22 +119,40 @@ function App() {
                     )
                   })
                 }
-            </div>
-            {/* {   
-          data.map((elem,index)=>{
-            return(
-            <Data key={index} name={elem.name} email={elem.email} index={index} />
-            )
-          })
-        } */}
+            </div> 
           </section>
         </div>
 
       </div>
 
 
-
-
+      <button className='w-full bg-green-500 text-white font-bold text-center py-2 rounded-lg hover:bg-green-600 transition duration-300' onClick={()=>setState(state+1)}>next user {state}</button>
+        {
+          fetchdata&&
+          fetchdata.map((fectchelem)=>{
+            return(
+              <>
+              <div key={fectchelem.id} className='flex justify-center text-center flex-col bg-slate-100'>
+            <img src={fectchelem.imageUrl} className='w-20 rounded-full mx-auto my-7 shadow-md'/>
+            <h1 className=' text-green-600'>Name</h1>
+            <h1>{fectchelem.firstName} {fectchelem.lastName}</h1>
+            <h1 className=' text-green-600'>Email</h1>
+            <h1>{fectchelem.email}</h1>
+            <h1 className=' text-green-600'>Phone</h1>
+            <h1>{fectchelem.contactNumber}</h1>
+            <h1 className=' text-green-600'>Age</h1>
+            <h1>{fectchelem.age}</h1>
+            <h1 className=' text-green-600'>Date Of Birth</h1>
+            <h1>{fectchelem.dob}</h1>
+            <h1 className=' text-green-600'>Salary</h1>
+            <h1>{fectchelem.salary}</h1>
+            <h1 className=' text-green-600'>Addrees</h1>
+            <h1 className='mb-2'>{fectchelem.address}</h1>
+              </div>
+              </>
+            )
+          })
+        }
 
     </>
   )
